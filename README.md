@@ -1,15 +1,15 @@
 # CSCI-2270-Final-Project
 Summary:
-Program that finds a song or band and displays info/rank. Will use a linked list to give recommendations within the genre. 
+This program will replicate the WWII German Enigma Cipher Machine. 
 
 How to Run:
 Run an executable.
 
 Dependencies:
-Whatever thing I need to get my API to run. JSON almost guarenteed. 
+None
 
 System Requirements:
-Linux
+Any OS that runs C++ programs
 
 Group Members:
 Oliver Hanna

@@ -1,5 +1,7 @@
 #ifndef ENIGMA_H
+#define ENIGMA_H
 #include <iostream>
+#include <vector>
 struct node
 {
 	char val;
@@ -9,7 +11,7 @@ struct node
 };
 struct Rotor
 {
-	char cipher[26];
+	std::vector<char> cipher;
 };
 class Enigma
 {
@@ -27,7 +29,7 @@ class Enigma
 		void createplugBoard();
 		void createReflector();
 		void segmentInput(std::string);
-		void rotateRotor(Rotor);
+		void rotateRotor(Rotor&);
 		char inverseMatch(char,Rotor);
 		char plug(char);
 		bool defaultR;

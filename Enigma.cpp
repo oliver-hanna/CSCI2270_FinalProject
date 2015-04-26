@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 Enigma::Enigma()
@@ -13,10 +14,10 @@ Enigma::Enigma()
 	for(int i=0;i<26;i++)
 	{
 		letters[i] = i + 65;
-		R1.cipher[i] = i + 65;
-		R2.cipher[i] = i + 65;
-		R3.cipher[i] = i + 65;
-		reflector.cipher[i] = i + 65;
+		R1.cipher.push_back(char(i + 65));
+		R2.cipher.push_back(char(i + 65));
+		R3.cipher.push_back(char(i + 65));
+		reflector.cipher.push_back(char(i + 65));
 	}
 	createReflector();
 	count = 0;
@@ -25,6 +26,8 @@ Enigma::Enigma()
 void Enigma::defaultRotors(bool input)
 {
 	defaultR = input;
+	createRotors();
+	createplugBoard();
 }
 
 void Enigma::setRings(string rings)
@@ -37,21 +40,23 @@ void Enigma::createRotors()
 {
 	if(defaultR == false)
 	{
-		srand(time(NULL));
-		shuffle(R1.cipher[0],R1.cipher[25],rand());
-		ringMod(1,R1);
-		srand(time(NULL));
-		shuffle(R2.cipher[0],R2.cipher[25],rand());
-		ringMod(2,R2);
-		srand(time(NULL));
-		shuffle(R3.cipher[0],R3.cipher[25],rand());
-		ringMod(3,R3);
+		random_device rd;
+		mt19937 g(rd());
+		cout<<"??"<<endl;
+		shuffle(R1.cipher.begin(),R1.cipher.end(),g);
+		cout<<":)"<<endl;
+		ringMod(0,R1);
+		shuffle(R2.cipher.begin(),R2.cipher.end(),g);
+		ringMod(1,R2);
+		shuffle(R3.cipher.begin(),R3.cipher.end(),g);
+		ringMod(2,R3);
 	}
 }
 
 void Enigma::ringMod(int number, Rotor& r)
 {
-	int offset = ringSettings[number] - 'A';
+	int offset = ringSettings[number] - 65;
+	cout<<ringSettings[number]<<offset<<endl;
 	if(offset == 0)
 		return;
 	char temp = 'A';
@@ -65,6 +70,7 @@ void Enigma::ringMod(int number, Rotor& r)
 			place = (place+offset)-26;
 		else
 			place += offset;
+		cout<<place<<endl;
 		temp = r.cipher[place];
 		r.cipher[place] = temp1;
 	}
@@ -74,13 +80,14 @@ void Enigma::createplugBoard()
 {
 	if(defaultR == false)
 	{
-		char temp[26];
+		vector<char> temp;
 		for(int i=0;i<26;i++)
 		{
-			temp[i] = letters[i];
+			temp.push_back(letters[i]);
 		}
-		srand(time(NULL));
-		shuffle(temp[0],temp[25],rand());
+		random_device rd;
+		mt19937 g(rd());
+		shuffle(temp.begin(),temp.end(),g);
 		for(int i=0;i<10;i++)
 		{
 			plugBoard[i] = temp[i] + temp[19-i];
@@ -115,14 +122,17 @@ void Enigma::segmentInput(string input)
 string Enigma::Encrypt(string input)
 {
 	segmentInput(input);
+	cout<<"Yeah"<<endl;
 	node *x = new node;
 	x = root;
 	while(x != NULL)
 	{
 		node *n = new node;
-		node *y = new node;
+	//	node *y = new node;
 		n = x;
+		cout<<"z"<<endl;
 		rotateRotor(R3);
+		cout<<"p"<<endl;
 		count++;
 		if(count%26 == 0)
 			rotateRotor(R2);
@@ -143,7 +153,26 @@ string Enigma::Encrypt(string input)
 		cinput = plug(cinput);
 		x=x->nextchar;
 	}
+	x = root;
+	for(int i=0;i<input.length();i++)
+	{
+		if(input[i] != ' ')
+		{
+			input[i] = x->val;
+			x = x->nextchar;
+		}
+	}
 	return input;
+}
+
+void Enigma::rotateRotor(Rotor &r)
+{
+	char temp = r.cipher[25];
+	for(int i=25;i>0;i--)
+	{
+		r.cipher[i] = r.cipher[i-1];
+	}
+	r.cipher[0] = temp;
 }
 
 char Enigma::inverseMatch(char ch,Rotor r)

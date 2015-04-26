@@ -42,9 +42,7 @@ void Enigma::createRotors()
 	{
 		random_device rd;
 		mt19937 g(rd());
-		cout<<"??"<<endl;
 		shuffle(R1.cipher.begin(),R1.cipher.end(),g);
-		cout<<":)"<<endl;
 		ringMod(0,R1);
 		shuffle(R2.cipher.begin(),R2.cipher.end(),g);
 		ringMod(1,R2);
@@ -56,7 +54,6 @@ void Enigma::createRotors()
 void Enigma::ringMod(int number, Rotor& r)
 {
 	int offset = ringSettings[number] - 65;
-	cout<<ringSettings[number]<<offset<<endl;
 	if(offset == 0)
 		return;
 	char temp = 'A';
@@ -106,7 +103,9 @@ void Enigma::segmentInput(string input)
 {
 	node *x = new node;
 	root = x;
-	for(int i=0;i<input.length();i++)
+	x->val = input[0];
+	x->nextchar = NULL;
+	for(int i=1;i<input.length();i++)
 	{
 		if(input[i] != ' ')
 		{
@@ -122,7 +121,6 @@ void Enigma::segmentInput(string input)
 string Enigma::Encrypt(string input)
 {
 	segmentInput(input);
-	cout<<"Yeah"<<endl;
 	node *x = new node;
 	x = root;
 	while(x != NULL)
@@ -130,9 +128,7 @@ string Enigma::Encrypt(string input)
 		node *n = new node;
 	//	node *y = new node;
 		n = x;
-		cout<<"z"<<endl;
 		rotateRotor(R3);
-		cout<<"p"<<endl;
 		count++;
 		if(count%26 == 0)
 			rotateRotor(R2);
@@ -151,6 +147,8 @@ string Enigma::Encrypt(string input)
 		cinput = inverseMatch(cinput,R2);
 		cinput = inverseMatch(cinput,R3);
 		cinput = plug(cinput);
+		cout<<"f: "<<cinput<<endl;
+		x->val = cinput;
 		x=x->nextchar;
 	}
 	x = root;

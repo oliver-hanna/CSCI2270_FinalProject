@@ -16,5 +16,8 @@ Any OS that runs C++ programs
 Group Members:
 Oliver Hanna
 
-
+Improvements:
+For those who want to add to the program it currently does not support
+any lowercase inputs. There are also almost no safeguards to check for punctuation or odd inputs (like numbers). These have the potential to break the program.
+Adding safeguards to prevent the program from crashing and adding lowercase support are both possible TO-DO's. 
 

@@ -9,8 +9,6 @@ using namespace std;
 
 Enigma::Enigma()
 {
-	inputRoot = new node;
-	root = new node;
 	for(int i=0;i<26;i++)
 	{
 		letters[i] = i + 65;
@@ -77,6 +75,18 @@ void Enigma::createRotors()
 		shuffle(R3.cipher.begin(),R3.cipher.end(),g);
 		ringMod(2,R3);
 	}
+	else
+	{
+		string d1 = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+		string d2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+		string d3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+		R1.cipher.empty();
+		R2.cipher.empty();
+		R3.cipher.empty();
+		copy(d1.begin(),d1.end(),back_inserter(R1.cipher));
+		copy(d2.begin(),d2.end(),back_inserter(R2.cipher));
+		copy(d3.begin(),d3.end(),back_inserter(R3.cipher));
+	}
 }
 
 void Enigma::ringMod(int number, Rotor& r)
@@ -120,6 +130,14 @@ void Enigma::createplugBoard()
 			plugBoard[i] += temp[19-i];
 		}
 	}
+	else
+	{
+		string dp = "AVBSCGDLFUHZINKMOWRX";
+		for(int i=0;i<10;i++)
+		{
+			plugBoard[i] = dp[i*2] + dp[i*2+1];
+		}
+	}
 }
 
 void Enigma::createReflector()
@@ -131,6 +149,7 @@ void Enigma::createReflector()
 
 void Enigma::segmentInput(string input)
 {
+	root = new node;
 	node *x = new node;
 	root = x;
 	x->val = input[0];
@@ -190,7 +209,14 @@ string Enigma::Encrypt(string input)
 			x = x->nextchar;
 		}
 	}
+	count = 0;
 	return input;
+}
+
+string Enigma::Decrypt(string s)
+{
+	delete root;
+	return Encrypt(s);
 }
 
 void Enigma::rotateRotor(Rotor &r)

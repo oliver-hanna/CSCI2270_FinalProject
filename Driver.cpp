@@ -31,9 +31,36 @@ int main()
 		while(input != "n" && input != "q")
 		{
 			cout<<"Enter E to Encrypt a message."<<endl;
-			cout<<"Enter D to Decrypt a message."<<endl;
 			cout<<"Enter V to view the Rotor settings."<<endl;
 			cout<<"Enter P to view the Plugboard settings."<<endl;
+			cout<<"Enter n to make a new machine."<<endl;
+			cout<<"Enter q to quit."<<endl;
+			getline(cin,input);
+			if(input == "E")
+			{
+				cout<<"Enter message: "<<endl;
+				string msg;
+				getline(cin,msg);
+				string e = machine.Encrypt(msg);
+				cout<<"Encrypted message: "<<e<<endl;
+				cout<<"Press D to attempt to Decrypt your message. c to continue."<<endl;
+				getline(cin,input);
+				if(input == "D")
+				{
+					string d = machine.Decrypt(e);
+					if(d == msg)
+						cout<<"Success!"<<endl;
+					else
+						cout<<"Decryption Failed."<<endl;
+					cout<<"Decrypted message: "<<d<<endl;
+				}
+			}
+			else if(input == "V")
+				machine.printRotorSettings();
+			else if(input == "P")
+				machine.printPlugBoard();
+			else if(input == "q")
+				cout<<"Bye"<<endl;
 		}
 	}
 	return 0;

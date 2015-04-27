@@ -44,6 +44,5 @@ class Enigma
 		char ringSettings[3];
 		Rotor R1, R2, R3, reflector;
 		node *root;
-		node *inputRoot;
 };
 #endif

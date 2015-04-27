@@ -21,9 +21,10 @@ class Enigma
 		void defaultRotors(bool);
 		std::string Encrypt(std::string);
 		std::string Decrypt(std::string);
-		void printCharEncrypt(char);
+		void printEncrypt();
 		void printRotorSettings();
 		void printPlugBoard();
+		void defaultPlugs(bool);
 	private:
 		void createRotors();
 		void ringMod(int,Rotor&);
@@ -33,6 +34,7 @@ class Enigma
 		void rotateRotor(Rotor&);
 		char inverseMatch(char,Rotor);
 		char plug(char);
+		bool defaultP;
 		bool defaultR;
 		char letters[26];
 		int count;

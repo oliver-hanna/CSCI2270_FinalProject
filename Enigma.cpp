@@ -50,6 +50,11 @@ void Enigma::defaultRotors(bool input)
 {
 	defaultR = input;
 	createRotors();
+}
+
+void Enigma::defaultPlugs(bool input)
+{
+	defaultP = input;
 	createplugBoard();
 }
 
@@ -98,7 +103,7 @@ void Enigma::ringMod(int number, Rotor& r)
 
 void Enigma::createplugBoard()
 {
-	if(defaultR == false)
+	if(defaultP == false)
 	{
 		vector<char> temp;
 		for(int i=0;i<26;i++)

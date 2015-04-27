@@ -114,7 +114,6 @@ void Enigma::ringMod(int number, Rotor& r)
 			place = (place+offset)-26;
 		else
 			place += offset;
-		cout<<place<<endl;
 		temp = r.cipher[place];
 		r.cipher[place] = temp1;
 	}

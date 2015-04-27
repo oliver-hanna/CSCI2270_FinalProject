@@ -9,9 +9,14 @@ int main()
 	Enigma machine = Enigma();
 	machine.setRings("AAA");
 	machine.defaultRotors(input == "D");
+	cout<<"    ABCDEFGHIJKLMNOPQRSTUVWXYZ"<<endl;
+	machine.printRotorSettings();
+	machine.printPlugBoard();
 	cout<<"Enter message to be encrypted:"<<endl;
 	getline(cin,input);
 	string encrypted = machine.Encrypt(input);
 	cout<<encrypted<<endl;
+	string decrypted = machine.Encrypt(encrypted);
+	cout<<decrypted<<endl;
 	return 0;
 }

@@ -23,6 +23,7 @@ class Enigma
 		std::string Decrypt(std::string);
 		void printCharEncrypt(char);
 		void printRotorSettings();
+		void printPlugBoard();
 	private:
 		void createRotors();
 		void ringMod(int,Rotor&);

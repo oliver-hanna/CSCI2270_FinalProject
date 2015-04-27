@@ -23,6 +23,29 @@ Enigma::Enigma()
 	count = 0;
 }
 
+void Enigma::printRotorSettings()
+{
+	cout<<"R1 :";
+	for(int i=0;i<26;i++)
+		cout<<R1.cipher[i];
+	cout<<endl;	
+	cout<<"R2 :";
+	for(int i=0;i<26;i++)
+		cout<<R2.cipher[i];
+	cout<<endl;
+	cout<<"R3 :";
+	for(int i=0;i<26;i++)
+		cout<<R3.cipher[i];
+	cout<<endl;
+}
+
+void Enigma::printPlugBoard()
+{
+	for(int i=0;i<10;i++)
+		cout<<plugBoard[i]<<" ";
+	cout<<endl;
+}
+
 void Enigma::defaultRotors(bool input)
 {
 	defaultR = input;
@@ -87,7 +110,9 @@ void Enigma::createplugBoard()
 		shuffle(temp.begin(),temp.end(),g);
 		for(int i=0;i<10;i++)
 		{
-			plugBoard[i] = temp[i] + temp[19-i];
+			plugBoard[i] = "";
+			plugBoard[i] += temp[i];
+			plugBoard[i] += temp[19-i];
 		}
 	}
 }
@@ -95,7 +120,7 @@ void Enigma::createplugBoard()
 void Enigma::createReflector()
 {
 	string sreflector = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
-	for(int i=0;i<25;i++)
+	for(int i=0;i<26;i++)
 		reflector.cipher[i] = sreflector[i];
 }
 
@@ -123,31 +148,31 @@ string Enigma::Encrypt(string input)
 	segmentInput(input);
 	node *x = new node;
 	x = root;
+	Rotor R1c,R2c,R3c;
+	R1c = R1;
+	R2c = R2;
+	R3c = R3;
 	while(x != NULL)
 	{
 		node *n = new node;
 	//	node *y = new node;
 		n = x;
-		rotateRotor(R3);
+		rotateRotor(R3c);
 		count++;
 		if(count%26 == 0)
-			rotateRotor(R2);
+			rotateRotor(R2c);
 		if(count%26%26 == 0)
-			rotateRotor(R1);
+			rotateRotor(R1c);
 		cinput = x->val;
-
 		cinput = plug(cinput);
-		cinput = R3.cipher[cinput - 'A'];
-		cinput = R2.cipher[cinput - 'A'];
-		cinput = R1.cipher[cinput - 'A'];
-
+		cinput = R3c.cipher[cinput - 'A'];
+		cinput = R2c.cipher[cinput - 'A'];
+		cinput = R1c.cipher[cinput - 'A'];
 		cinput = reflector.cipher[cinput - 'A'];
-
-		cinput = inverseMatch(cinput,R1);
-		cinput = inverseMatch(cinput,R2);
-		cinput = inverseMatch(cinput,R3);
+		cinput = inverseMatch(cinput,R1c);
+		cinput = inverseMatch(cinput,R2c);
+		cinput = inverseMatch(cinput,R3c);
 		cinput = plug(cinput);
-		cout<<"f: "<<cinput<<endl;
 		x->val = cinput;
 		x=x->nextchar;
 	}
@@ -175,10 +200,15 @@ void Enigma::rotateRotor(Rotor &r)
 
 char Enigma::inverseMatch(char ch,Rotor r)
 {
-	int place = ch - 'A';
-	place = 25 - place;
-	ch = r.cipher[place];
-	return ch;
+	int i=-1;
+	bool found = false;
+	while(!found)
+	{
+		i++;
+		if(ch == r.cipher[i])
+			found = true;
+	}
+	return letters[i];
 }
 
 char Enigma::plug(char ch)
@@ -186,10 +216,10 @@ char Enigma::plug(char ch)
 	for(int i=0;i<10;i++)
 	{
 		string plug = plugBoard[i];
-		if(ch == plug[1])
-			return plug[2];
-		else if(ch == plug[2])
+		if(ch == plug[0])
 			return plug[1];
+		else if(ch == plug[1])
+			return plug[0];
 	}
 	return ch;
 }

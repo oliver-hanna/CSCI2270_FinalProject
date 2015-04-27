@@ -26,6 +26,7 @@ class Enigma
 		void printRotorSettings();
 		void printPlugBoard();
 		void defaultPlugs(bool);
+		void about();
 	private:
 		void createRotors();
 		void ringMod(int,Rotor&);

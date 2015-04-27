@@ -9,6 +9,10 @@ int main()
 		Enigma machine = Enigma();
 		string plugz;
 		cout<<"Welcome to the Enigma Cipher Machine. All inputs must be uppercase."<<endl;
+		cout<<"First, would you like to learn more about the machine? Y/N"<<endl;
+		getline(cin,input);
+		if(input == "Y")
+			machine.about();
 		cout<<"Please enter a 3 letter string (ex: AAA) to set the rings."<<endl;
 		getline(cin,plugz);
 		while(plugz.length() != 3)

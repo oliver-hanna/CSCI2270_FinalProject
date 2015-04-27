@@ -7,6 +7,8 @@
 #include <vector>
 using namespace std;
 
+//Base public contructor. This fills each rotator with the basic alphabet as well as a letters array with the alphabet. It will also create the reflector.
+
 Enigma::Enigma()
 {
 	for(int i=0;i<26;i++)
@@ -21,6 +23,7 @@ Enigma::Enigma()
 	count = 0;
 }
 
+//Simple print functions. Should be straightforward. Prints the elements of each rotator vector.
 void Enigma::printRotorSettings()
 {
 	cout<<"R1 :";
@@ -44,6 +47,7 @@ void Enigma::printPlugBoard()
 	cout<<endl;
 }
 
+//Funcitions to determine whether or not we're using the default rotaters/plugboards or not. setRings will use the user's ringsettings.
 void Enigma::defaultRotors(bool input)
 {
 	defaultR = input;
@@ -61,7 +65,8 @@ void Enigma::setRings(string rings)
 	for(int i=0;i<3;i++)
 		ringSettings[i] = rings[i];
 }
-
+//Function to create the rotors. If default rotors are not being used, the shuffle method will be called on each of the rotor vectors (which are currently just filled with the alphabet.)
+//This means that each rotor will now consist of a scrambled alphabet to use as keys. 
 void Enigma::createRotors()
 {
 	if(defaultR == false)
@@ -86,9 +91,13 @@ void Enigma::createRotors()
 		copy(d1.begin(),d1.end(),back_inserter(R1.cipher));
 		copy(d2.begin(),d2.end(),back_inserter(R2.cipher));
 		copy(d3.begin(),d3.end(),back_inserter(R3.cipher));
+		ringMod(0,R1);
+		ringMod(1,R2);
+		ringMod(2,R3);
 	}
 }
 
+//Rings essentially are an extra layer of complexity to offset each rotor. After each rotor is created or scrambled, then they are offset based on the ringmod settings.
 void Enigma::ringMod(int number, Rotor& r)
 {
 	int offset = ringSettings[number] - 65;
@@ -111,6 +120,7 @@ void Enigma::ringMod(int number, Rotor& r)
 	}
 }
 
+//The random plugboard is created by shuffling a vector of the alphabet. The first 20 letters of that shuffled vector are mapped to eachother, so we get 10 pairings. Those 10 pairings are then put into an array
 void Enigma::createplugBoard()
 {
 	if(defaultP == false)
@@ -147,6 +157,7 @@ void Enigma::createReflector()
 		reflector.cipher[i] = sreflector[i];
 }
 
+//Here we're putting the message into a linked list to be passed through the encryption machine. This lets us easily move through each character.
 void Enigma::segmentInput(string input)
 {
 	root = new node;
@@ -168,6 +179,13 @@ void Enigma::segmentInput(string input)
 	}
 }
 
+//First segment the input into a linked list
+//Next, create copies of the original rotors so that we don't update the original rotor positions. This is essential if we want to decrypt
+//Finally, we're going to encrypt each letter at a time by passing them through the different components of the machine.
+//There is a linked list that contains all of the original letters starting at the root
+//Each element of the linked list has another linked list pointing downards, to make a tree-like structure
+//This second linked list is to keep track of the encryption process for each character
+//This means that afterwards we can view how each character changed each time it was passed through a certain part of the machine.
 string Enigma::Encrypt(string input)
 {
 	segmentInput(input);
@@ -260,6 +278,7 @@ string Enigma::Encrypt(string input)
 	return input;
 }
 
+//This is the place where we can view how each letter was encrypted. How the 2D-linked list or tree-like structure is used is more obvious here
 void Enigma::printEncrypt()
 {
 	node *f = new node;
@@ -293,6 +312,7 @@ string Enigma::Decrypt(string s)
 	return Encrypt(s);
 }
 
+//Rotating a rotor essentially offsets it by one.
 void Enigma::rotateRotor(Rotor &r)
 {
 	char temp = r.cipher[25];
@@ -302,7 +322,7 @@ void Enigma::rotateRotor(Rotor &r)
 	}
 	r.cipher[0] = temp;
 }
-
+//Getting an inverse of a rotor's character means that we have to match the position of the character in the rotor to the corresponding letter of the alphabet in that position
 char Enigma::inverseMatch(char ch,Rotor r)
 {
 	int i=-1;
@@ -315,7 +335,7 @@ char Enigma::inverseMatch(char ch,Rotor r)
 	}
 	return letters[i];
 }
-
+//This returns the modified character based on the plugs, and if that character isn't one of the 20 plugboard characters then it is returned as itself
 char Enigma::plug(char ch)
 {
 	for(int i=0;i<10;i++)
@@ -327,4 +347,16 @@ char Enigma::plug(char ch)
 			return plug[0];
 	}
 	return ch;
+}
+
+void Enigma::about()
+{
+	cout<<"The Enigma Machine is a cipher machine that the Germans used in WWII."<<endl;
+	cout<<"It consists of a few basic components: 3 rotors, 1 plugboard, and 1 reflector."<<endl;
+	cout<<"When you put in a character to the machine, it will pass through the 3 rotors. Each rotor changes the character based on a specific cipher that each rotor has."<<endl;
+	cout<<"The plugboard maps 10 characters to 10 other chaaracters, the character will be put through the plugboard at the beginning and ending of encryption/decryption."<<endl;
+	cout<<"Each rotor has a ringsetting, that will offset it for further complexity."<<endl;
+	cout<<"The reflector sends the character back through the machine after it has been through the first 3 rotors."<<endl;
+	cout<<"Once through the reflector, the character will be changed again to a unique different character. It will then go through the inverse of the 3 rotors."<<endl;
+	cout<<"Finally, you will have your encrypted character."<<endl;
 }

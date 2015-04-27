@@ -47,7 +47,8 @@ void Enigma::printPlugBoard()
 	cout<<endl;
 }
 
-//Funcitions to determine whether or not we're using the default rotaters/plugboards or not. setRings will use the user's ringsettings.
+//Funcitions to determine whether or not we're using the default rotaters/plugboards or not. setRings will use the user's ringsettings. 
+//Inputs = user input deterimined in driver
 void Enigma::defaultRotors(bool input)
 {
 	defaultR = input;
@@ -157,6 +158,7 @@ void Enigma::createReflector()
 }
 
 //Here we're putting the message into a linked list to be passed through the encryption machine. This lets us easily move through each character.
+//The output will be a link list created in the class instance.
 void Enigma::segmentInput(string input)
 {
 	root = new node;
@@ -185,6 +187,7 @@ void Enigma::segmentInput(string input)
 //Each element of the linked list has another linked list pointing downards, to make a tree-like structure
 //This second linked list is to keep track of the encryption process for each character
 //This means that afterwards we can view how each character changed each time it was passed through a certain part of the machine.
+//Our output is formed by replacing each character of the string with the corresponding character from the final linked list.
 string Enigma::Encrypt(string input)
 {
 	segmentInput(input);

@@ -22,6 +22,7 @@ class Enigma
 		std::string Encrypt(std::string);
 		std::string Decrypt(std::string);
 		void printEncrypt();
+		void printDecrypt();
 		void printRotorSettings();
 		void printPlugBoard();
 		void defaultPlugs(bool);
@@ -44,5 +45,6 @@ class Enigma
 		char ringSettings[3];
 		Rotor R1, R2, R3, reflector;
 		node *root;
+		node *froot;
 };
 #endif

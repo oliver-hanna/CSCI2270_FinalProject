@@ -44,6 +44,11 @@ int main()
 				string e = machine.Encrypt(msg);
 				cout<<"Encrypted message: "<<e<<endl;
 				cout<<"Press D to attempt to Decrypt your message. c to continue."<<endl;
+				cout<<"Press P to view the encrtpytion path."<<endl;
+				getline(cin,input);
+				if(input == "P")
+					machine.printEncrypt();
+				cout<<"Decrypt now? PRESS D"<<endl;
 				getline(cin,input);
 				if(input == "D")
 				{
@@ -53,6 +58,10 @@ int main()
 					else
 						cout<<"Decryption Failed."<<endl;
 					cout<<"Decrypted message: "<<d<<endl;
+					cout<<"Print decryption path? PRESS P"<<endl;
+					getline(cin,input);
+					if(input == "P")
+						machine.printDecrypt();
 				}
 			}
 			else if(input == "V")

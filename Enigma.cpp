@@ -152,6 +152,7 @@ void Enigma::segmentInput(string input)
 	root = new node;
 	node *x = new node;
 	root = x;
+	root->nextstep = NULL;
 	x->val = input[0];
 	x->nextchar = NULL;
 	for(int i=1;i<input.length();i++)
@@ -171,6 +172,9 @@ string Enigma::Encrypt(string input)
 {
 	segmentInput(input);
 	node *x = new node;
+	froot = new node;
+	node *f = new node;
+	froot = f;
 	x = root;
 	Rotor R1c,R2c,R3c;
 	R1c = R1;
@@ -179,7 +183,7 @@ string Enigma::Encrypt(string input)
 	while(x != NULL)
 	{
 		node *n = new node;
-	//	node *y = new node;
+		node *y = new node;
 		n = x;
 		rotateRotor(R3c);
 		count++;
@@ -189,18 +193,61 @@ string Enigma::Encrypt(string input)
 			rotateRotor(R1c);
 		cinput = x->val;
 		cinput = plug(cinput);
+
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+
 		cinput = R3c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = R2c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = R1c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = reflector.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = inverseMatch(cinput,R1c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = inverseMatch(cinput,R2c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = inverseMatch(cinput,R3c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
 		cinput = plug(cinput);
-		x->val = cinput;
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		n->nextstep = NULL;
+
+		f->val = cinput;
+		node *ft = new node;
+		f->nextchar = ft;
+		f = ft;
 		x=x->nextchar;
 	}
-	x = root;
+	f = NULL;
+	x = froot;
 	for(int i=0;i<input.length();i++)
 	{
 		if(input[i] != ' ')
@@ -211,6 +258,33 @@ string Enigma::Encrypt(string input)
 	}
 	count = 0;
 	return input;
+}
+
+void Enigma::printEncrypt()
+{
+	node *f = new node;
+	node *fs = new node;
+	f = root;
+	cout<<"ORIGINAL LETTER->PLUG->ROTOR3->ROTOR2->ROTOR1->REFLECTOR->INVERSE ROTOR1->INVERSE ROTOR2->INVERSE ROTOR 3->PLUG(FINAL OUTPUT)"<<endl;
+	while(f != NULL)
+	{
+		fs = f;
+		cout<<f->val<<"->";
+		while(fs->nextstep != NULL)
+		{
+			fs = fs->nextstep;
+			cout<<fs->val;
+			if(fs->nextstep != NULL)
+				cout<<"-->";
+		}
+		cout<<endl;
+		f = f->nextchar;
+	}
+}
+
+void Enigma::printDecrypt()
+{
+	printEncrypt();
 }
 
 string Enigma::Decrypt(string s)

@@ -13,7 +13,7 @@ How to Run:
 Copy the repository to its own directory. I've already compiled the program, so run ./Driver in the linux terminal, or alternatively compile it yourself by running:
 make
 and then ./Driver afterwards.
-The Driver runs the whole program and main!
+The Driver runs the whole program (and is the main)!
 
 Dependencies:
 None

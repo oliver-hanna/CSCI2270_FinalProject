@@ -325,7 +325,7 @@ string Enigma::Decrypt(string s)
 	return DecryptH(s);
 }
 
-//Helper function for Decrypt. Same as decrypt, only doesn't change the values of lower_array.
+//Helper function for Decrypt. Same as Encrypt, only doesn't change the values of lower_array.
 string Enigma::DecryptH(string input)
 {
 	segmentInput(input);

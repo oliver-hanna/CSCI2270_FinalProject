@@ -7,6 +7,7 @@ struct node
 	char val;
 	node *nextchar;
 	node *nextstep;
+	bool lower = false;//If the original letter was lowercase.
 //	node *prev;
 };
 struct Rotor
@@ -21,6 +22,7 @@ class Enigma
 		void defaultRotors(bool);
 		std::string Encrypt(std::string);
 		std::string Decrypt(std::string);
+		std::string DecryptH(std::string);
 		void printEncrypt();
 		void printDecrypt();
 		void printRotorSettings();
@@ -47,5 +49,6 @@ class Enigma
 		Rotor R1, R2, R3, reflector;
 		node *root;
 		node *froot;
+		bool * lower_array;
 };
 #endif

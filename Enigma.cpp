@@ -5,6 +5,7 @@
 #include <time.h>
 #include <algorithm>
 #include <vector>
+#include <ctype.h>
 using namespace std;
 
 //Base public contructor. This fills each rotator with the basic alphabet as well as a letters array with the alphabet. It will also create the reflector.
@@ -29,7 +30,7 @@ void Enigma::printRotorSettings()
 	cout<<"R1 :";
 	for(int i=0;i<26;i++)
 		cout<<R1.cipher[i];
-	cout<<endl;	
+	cout<<endl;
 	cout<<"R2 :";
 	for(int i=0;i<26;i++)
 		cout<<R2.cipher[i];
@@ -47,7 +48,7 @@ void Enigma::printPlugBoard()
 	cout<<endl;
 }
 
-//Funcitions to determine whether or not we're using the default rotaters/plugboards or not. setRings will use the user's ringsettings. 
+//Funcitions to determine whether or not we're using the default rotaters/plugboards or not. setRings will use the user's ringsettings.
 //Inputs = user input deterimined in driver
 void Enigma::defaultRotors(bool input)
 {
@@ -67,7 +68,7 @@ void Enigma::setRings(string rings)
 		ringSettings[i] = rings[i];
 }
 //Function to create the rotors. If default rotors are not being used, the shuffle method will be called on each of the rotor vectors (which are currently just filled with the alphabet.)
-//This means that each rotor will now consist of a scrambled alphabet to use as keys. 
+//This means that each rotor will now consist of a scrambled alphabet to use as keys.
 void Enigma::createRotors()
 {
 	if(defaultR == false)
@@ -165,6 +166,10 @@ void Enigma::segmentInput(string input)
 	node *x = new node;
 	root = x;
 	root->nextstep = NULL;
+	if(islower(input[0])){//if the character is lower case
+        input[0] = toupper(input[0]);//toupper returns the ASCII value of the uppercase letter
+        x->lower = true;//used in the string comparison latter
+	}
 	x->val = input[0];
 	x->nextchar = NULL;
 	for(int i=1;i<input.length();i++)
@@ -172,6 +177,10 @@ void Enigma::segmentInput(string input)
 		if(input[i] != ' ')
 		{
 			node *y = new node;
+			if(islower(input[i])){//if the character is lower case
+                input[i] = toupper(input[i]);//toupper returns the ASCII value of the uppercase letter
+                y->lower = true;//used in the string comparison latter
+            }
 			y->val = input[i];
 			y->nextchar = NULL;
 			x->nextchar = y;
@@ -190,6 +199,7 @@ void Enigma::segmentInput(string input)
 //Our output is formed by replacing each character of the string with the corresponding character from the final linked list.
 string Enigma::Encrypt(string input)
 {
+    lower_array = new bool[input.length()]; //array which will store the lowercase information
 	segmentInput(input);
 	node *x = new node;
 	froot = new node;
@@ -202,6 +212,7 @@ string Enigma::Encrypt(string input)
 	R3c = R3;
 	while(x != NULL)
 	{
+	    lower_array[count] = x->lower;
 		node *n = new node;
 		node *y = new node;
 		n = x;
@@ -311,7 +322,103 @@ void Enigma::printDecrypt()
 string Enigma::Decrypt(string s)
 {
 	delete root;
-	return Encrypt(s);
+	return DecryptH(s);
+}
+
+//Helper function for Decrypt. Same as decrypt, only doesn't change the values of lower_array.
+string Enigma::DecryptH(string input)
+{
+	segmentInput(input);
+	node *x = new node;
+	froot = new node;
+	node *f = new node;
+	froot = f;
+	x = root;
+	Rotor R1c,R2c,R3c;
+	R1c = R1;
+	R2c = R2;
+	R3c = R3;
+	while(x != NULL)
+	{
+		node *n = new node;
+		node *y = new node;
+		n = x;
+		rotateRotor(R3c);
+		count++;
+		if(count%26 == 0)
+			rotateRotor(R2c);
+		if(count%26%26 == 0)
+			rotateRotor(R1c);
+		cinput = x->val;
+		cinput = plug(cinput);
+
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+
+		cinput = R3c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = R2c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = R1c.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = reflector.cipher[cinput - 'A'];
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = inverseMatch(cinput,R1c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = inverseMatch(cinput,R2c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = inverseMatch(cinput,R3c);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		y = new node;
+		cinput = plug(cinput);
+		y->val = cinput;
+		n->nextstep = y;
+		n = n->nextstep;
+		n->nextstep = NULL;
+
+		f->val = cinput;
+		node *ft = new node;
+		f->nextchar = ft;
+		f = ft;
+		x=x->nextchar;
+	}
+	f = NULL;
+	x = froot;
+	for(int i=0;i<input.length();i++)
+	{
+		if(input[i] != ' ')
+		{
+		    if(lower_array[i]){//if the character is lower case
+                x->val = tolower(x->val);//toupper returns the ASCII value of the uppercase letter which is what a char really is
+            }
+			input[i] = x->val;
+			x = x->nextchar;
+		}
+	}
+	count = 0;
+	return input;
 }
 
 //Rotating a rotor essentially offsets it by one.
